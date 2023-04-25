@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "de.ybnt.sustenance.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "HungerManagerMixin"
+  ],
+  "client": [],
+  "server": []
+}
