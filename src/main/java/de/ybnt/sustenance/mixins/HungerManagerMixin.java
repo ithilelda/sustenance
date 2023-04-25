@@ -11,10 +11,12 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin
 {
+    // saturation levels can go beyond food levels, so it will not be capped at 20. You can have food that have larger saturation.
     @Inject(method = "add(IF)V", at = @At("HEAD"), cancellable = true)
     private void add(int food, float saturationModifier, CallbackInfo info)
     {
@@ -26,6 +28,19 @@ public class HungerManagerMixin
         info.cancel();
     }
 
+    // make it so that when your saturation level is lower than 2, you are always seen as hungry, so that you can eat more food to heal.
+    @Inject(method = "isNotFull()Z", at = @At("HEAD"), cancellable = true)
+    private void isNotFull(CallbackInfoReturnable<Boolean> info)
+    {
+        HungerManager manager = (HungerManager)(Object)this;
+        boolean isNotFull = manager.getFoodLevel() < 20;
+        boolean isNotSat = manager.getSaturationLevel() < 2;
+        info.setReturnValue(isNotFull || isNotSat);
+        info.cancel();
+    }
+
+    // in vanilla, after your saturation goes below 6, your exhaustion level accumulates slower, thus resulting in slower healing when you have low saturation.
+    // This is fixed. Now you can heal with the same speed at all saturation levels.
     @Redirect(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
     private float saturationHealFix(float v1, float v2)
     {
@@ -35,7 +50,7 @@ public class HungerManagerMixin
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 10))
     private int fastHealInterval(int value)
     {
-        return 5;
+        return 10;
     }
 
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 20))
@@ -53,7 +68,7 @@ public class HungerManagerMixin
     ))
     private int slowHealInterval(int value)
     {
-        return 20;
+        return 80;
     }
 
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 18))
