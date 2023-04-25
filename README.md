@@ -1,9 +1,9 @@
-# Fabric Example Mod
+# Sustenance
+A small mod expanding the saturation/food system. Only required on the server. Installing it on the client allows single player worlds to be in effect.
 
-## Setup
+## Current Features:
+- saturation has no limit at all.
+- much faster health regeneration time.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+## Future plans:
+- adding attributes to modify health regeneration capabilities from food.
