@@ -39,7 +39,7 @@ public class Sustenance implements ModInitializer {
 			}
 		}
 		catch (IOException e) {
-			throw new RuntimeException(e);
+			LOGGER.error(e.getMessage());
 		}
 	}
 }
