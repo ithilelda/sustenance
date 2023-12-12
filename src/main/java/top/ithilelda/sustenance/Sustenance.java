@@ -1,4 +1,4 @@
-package de.y9s.sustenance;
+package top.ithilelda.sustenance;
 
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;

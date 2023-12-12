@@ -1,4 +1,4 @@
-package de.y9s.sustenance.mixins;
+package top.ithilelda.sustenance.mixins;
 
 import net.minecraft.entity.player.HungerManager;
 

@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "de.y9s.sustenance.Sustenance"
+      "top.ithilelda.sustenance.Sustenance"
     ]
   },
   "mixins": [
