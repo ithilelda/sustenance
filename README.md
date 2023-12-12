@@ -3,7 +3,7 @@ A small mod expanding the saturation/food system. Only required on the server. I
 
 ## Current Features:
 - saturation has no limit at all.
-- much faster health regeneration time.
+- Regeneration interval, threshold, and amount can be configured.
 
 ## Future plans:
 - adding attributes to modify health regeneration capabilities from food.
