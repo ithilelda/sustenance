@@ -1,8 +1,11 @@
 package top.ithilelda.sustenance;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 public class Sustenance implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -17,5 +20,7 @@ public class Sustenance implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Sustenance initialized.");
+		Path configPath = FabricLoader.getInstance().getConfigDir();
+		LOGGER.info(String.valueOf(configPath));
 	}
 }
