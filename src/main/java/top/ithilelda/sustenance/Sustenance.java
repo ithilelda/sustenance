@@ -40,6 +40,12 @@ public class Sustenance implements ModInitializer {
 		}
 		catch (Exception e) {
 			LOGGER.error(e.getMessage());
-		}
+			Config = new Configuration(); // generate a new default just to be sure.
+            try {
+                Files.writeString(configPath, yaml.dumpAs(Config, Tag.MAP, DumperOptions.FlowStyle.BLOCK));
+            } catch (IOException ex) {
+				LOGGER.error(ex.getMessage());
+            }
+        }
 	}
 }
