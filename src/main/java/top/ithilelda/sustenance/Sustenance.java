@@ -38,7 +38,7 @@ public class Sustenance implements ModInitializer {
 				Files.writeString(configPath, yaml.dumpAs(Config, Tag.MAP, DumperOptions.FlowStyle.BLOCK));
 			}
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 	}
