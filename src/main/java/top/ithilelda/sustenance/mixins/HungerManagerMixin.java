@@ -30,7 +30,7 @@ public class HungerManagerMixin
     @Redirect(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
     private float getFastHealExhaustionLevel(float v1, float v2)
     {
-        return Sustenance.Config.fastHealExhaustionLevel;
+        return Sustenance.Config.getFastHealExhaustionLevel();
     }
 
     @ModifyConstant(
@@ -42,13 +42,13 @@ public class HungerManagerMixin
             ))
     private float fastHealExhaustionRatio(float value)
     {
-        return Sustenance.Config.fastHealExhaustionRatio;
+        return Sustenance.Config.getFastHealExhaustionRatio();
     }
 
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 10))
     private int fastHealInterval(int value)
     {
-        return Sustenance.Config.fastHealInterval;
+        return Sustenance.Config.getFastHealInterval();
     }
 
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 20))
@@ -66,12 +66,12 @@ public class HungerManagerMixin
     ))
     private int slowHealInterval(int value)
     {
-        return Sustenance.Config.slowHealInterval;
+        return Sustenance.Config.getSlowHealInterval();
     }
 
     @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 18))
     private int slowHealThreshold(int value)
     {
-        return Sustenance.Config.slowHealThreshold; // food level above this will allow you to slow heal.
+        return Sustenance.Config.getSlowHealThreshold(); // food level above this will allow you to slow heal.
     }
 }

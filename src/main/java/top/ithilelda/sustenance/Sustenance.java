@@ -1,11 +1,12 @@
 package top.ithilelda.sustenance;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,17 +26,16 @@ public class Sustenance implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Sustenance initialized.");
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		mapper.findAndRegisterModules();
+		Yaml yaml = new Yaml();
 
 		Path configPath = FabricLoader.getInstance().getConfigDir().resolve("sustenance.yaml");
 		try {
 			if (Files.exists(configPath)) {
-				Config = mapper.readValue(Files.readString(configPath), Configuration.class);
+				Config = yaml.loadAs(Files.readString(configPath), Configuration.class);
 			}
 			else {
 				Files.createFile(configPath);
-				Files.writeString(configPath, mapper.writeValueAsString(Config));
+				Files.writeString(configPath, yaml.dumpAs(Config, Tag.MAP, DumperOptions.FlowStyle.BLOCK));
 			}
 		}
 		catch (IOException e) {
