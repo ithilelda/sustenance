@@ -22,6 +22,9 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// other dependencies for this project.
+	modImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2"
 }
 
 processResources {
@@ -42,12 +45,6 @@ java {
 	// if it is present.
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
-	}
 }
 
 modrinth {
