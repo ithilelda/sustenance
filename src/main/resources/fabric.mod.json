@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Sustenance",
-  "description": "A small mod expanding the food system",
+  "description": "Makes saturation unlimited and configure your regeneration settings.",
   "authors": [
     "ithilelda"
   ],
@@ -14,7 +14,7 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/sustenance/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -27,12 +27,8 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.14",
-    "fabric": "*",
-    "minecraft": "~1.18",
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~${minecraft_version}",
     "java": ">=17"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
