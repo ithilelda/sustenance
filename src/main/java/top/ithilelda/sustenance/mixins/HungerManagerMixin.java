@@ -21,7 +21,7 @@ public class HungerManagerMixin
     {
         HungerManager manager = (HungerManager)(Object)this;
         int curFood = manager.getFoodLevel() + food;
-        float curSat = manager.getSaturationLevel() + (float)food * saturationModifier * 2.0f;
+        float curSat = Math.min(manager.getSaturationLevel() + (float)food * saturationModifier * 2.0f, Sustenance.Config.getSaturationLimit());
         manager.setFoodLevel(Math.min(curFood, 20));
         manager.setSaturationLevel(curSat);
         info.cancel();

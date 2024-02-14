@@ -32,6 +32,7 @@ public class Sustenance implements ModInitializer {
 		try {
 			if (Files.exists(configPath)) {
 				Config = yaml.loadAs(Files.readString(configPath), Configuration.class);
+				Files.writeString(configPath, yaml.dumpAs(Config, Tag.MAP, DumperOptions.FlowStyle.BLOCK)); // dump again for updated configs.
 			}
 			else {
 				Files.createFile(configPath);
