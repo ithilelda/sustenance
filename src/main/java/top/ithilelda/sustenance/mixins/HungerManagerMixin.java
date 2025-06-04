@@ -27,38 +27,38 @@ public class HungerManagerMixin
         info.cancel();
     }
 
-    @Redirect(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
+    @Redirect(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
     private float getFastHealExhaustionLevel(float v1, float v2)
     {
         return Sustenance.Config.getFastHealExhaustionLevel();
     }
 
     @ModifyConstant(
-            method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V",
+            method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V",
             constant = @Constant(floatValue = 6.0F),
             slice = @Slice(
                     from = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"),
-                    to = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;heal(F)V")
+                    to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V")
             ))
     private float fastHealExhaustionRatio(float value)
     {
         return Sustenance.Config.getFastHealExhaustionRatio();
     }
 
-    @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 10))
+    @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 10))
     private int fastHealInterval(int value)
     {
         return Sustenance.Config.getFastHealInterval();
     }
 
-    @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 20))
+    @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 20))
     private int fastHealThreshold(int value)
     {
         return 0; // as long as you have saturation, you are gonna fast heal regardless of food level.
     }
 
     @ModifyConstant(
-        method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V",
+        method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V",
         constant = @Constant(intValue = 80),
         slice = @Slice(
             from = @At(value = "JUMP", opcode = Opcodes.GOTO, ordinal = 1),
@@ -69,7 +69,7 @@ public class HungerManagerMixin
         return Sustenance.Config.getSlowHealInterval();
     }
 
-    @ModifyConstant(method = "update(Lnet/minecraft/entity/player/PlayerEntity;)V", constant = @Constant(intValue = 18))
+    @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 18))
     private int slowHealThreshold(int value)
     {
         return Sustenance.Config.getSlowHealThreshold(); // food level above this will allow you to slow heal.
