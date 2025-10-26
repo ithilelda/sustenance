@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version "${loom_version}"
 	id "com.modrinth.minotaur" version "2.+"
 }
 
@@ -28,10 +28,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// other dependencies for this project.
-	implementation "org.yaml:snakeyaml:2.2"
 
 	// packing into the same jar.
-	include "org.yaml:snakeyaml:2.2"
 }
 
 processResources {

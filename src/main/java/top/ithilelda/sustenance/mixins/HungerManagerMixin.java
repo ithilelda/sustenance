@@ -1,77 +1,60 @@
 package top.ithilelda.sustenance.mixins;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.player.HungerManager;
 
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.ithilelda.sustenance.Sustenance;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin
 {
-    @Inject(method = "add(IF)V", at = @At("HEAD"), cancellable = true)
-    private void add(int food, float saturationModifier, CallbackInfo info)
+    // set the upper limit of saturation to almost infinity, regardless of the food level.
+    @Redirect(method = "addInternal(IF)V", at = @At(value = "FIELD", target="net/minecraft/entity/player/HungerManager.foodLevel:I", opcode = Opcodes.GETFIELD, ordinal = 1))
+    private int addWithoutSaturationLimit(HungerManager instance)
     {
-        HungerManager manager = (HungerManager)(Object)this;
-        int curFood = manager.getFoodLevel() + food;
-        float curSat = Math.min(manager.getSaturationLevel() + (float)food * saturationModifier * 2.0f, Sustenance.Config.getSaturationLimit());
-        manager.setFoodLevel(Math.min(curFood, 20));
-        manager.setSaturationLevel(curSat);
-        info.cancel();
+        return Integer.MAX_VALUE;
+    }
+    // Can always eat food if your saturation level is lower than 20.
+    @ModifyReturnValue(method = "isNotFull", at = @At("RETURN"))
+    private boolean isNotSaturated(boolean original)
+    {
+        HungerManager hm = (HungerManager) (Object) this;
+        return hm.getSaturationLevel() < 20.0F;
     }
 
-    @Redirect(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
-    private float getFastHealExhaustionLevel(float v1, float v2)
-    {
-        return Sustenance.Config.getFastHealExhaustionLevel();
-    }
+    // as long as you have saturation, you are gonna fast heal regardless of food level.
+    @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 20))
+    private int fastHealThreshold(int value) { return 0; }
 
-    @ModifyConstant(
-            method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V",
-            constant = @Constant(floatValue = 6.0F),
-            slice = @Slice(
-                    from = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"),
-                    to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;heal(F)V")
-            ))
-    private float fastHealExhaustionRatio(float value)
-    {
-        return Sustenance.Config.getFastHealExhaustionRatio();
-    }
-
+    // increase fast heal interval to each tick.
     @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 10))
     private int fastHealInterval(int value)
     {
-        return Sustenance.Config.getFastHealInterval();
+        return 1;
     }
 
-    @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 20))
-    private int fastHealThreshold(int value)
+    // when you have saturation, each fast heal will always add 4 exhaustion, resulting in 1 saturation decrease.
+    // meaning that 1 saturation = 1 point of health restored.
+    @ModifyExpressionValue(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(FF)F"))
+    private float fastHealExhaustionLevel(float original) { return 4.0F; }
+
+    // player will always heal 1 point when fast healing.
+    @WrapOperation(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.heal(F)V"))
+    private void fastHealPlayer(ServerPlayerEntity instance, float v, Operation<Void> original)
     {
-        return 0; // as long as you have saturation, you are gonna fast heal regardless of food level.
+        original.call(instance, 1.0F);
     }
 
-    @ModifyConstant(
-        method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V",
-        constant = @Constant(intValue = 80),
-        slice = @Slice(
-            from = @At(value = "JUMP", opcode = Opcodes.GOTO, ordinal = 1),
-            to = @At(value = "JUMP", opcode = Opcodes.GOTO, ordinal = 2)
-    ))
-    private int slowHealInterval(int value)
-    {
-        return Sustenance.Config.getSlowHealInterval();
-    }
-
+    // slow heal will occur when food level is higher than 10.
     @ModifyConstant(method = "update(Lnet/minecraft/server/network/ServerPlayerEntity;)V", constant = @Constant(intValue = 18))
-    private int slowHealThreshold(int value)
-    {
-        return Sustenance.Config.getSlowHealThreshold(); // food level above this will allow you to slow heal.
-    }
+    private int slowHealThreshold(int value) { return 10; }
 }
